@@ -1,0 +1,39 @@
+{
+    "resource.{resource}": {
+        "resource": null,
+        "basePath": "$global",
+        "apiVersion": "$global",
+        "swaggerVersion": "$global",
+        "apis.{url}" : {
+            "url" : "path",
+            "operations.[]" : {
+                "shortDesc": "nickname",
+                "longDesc" : "notes",
+                "method": "httpMethod",
+                "return": "responseClass",
+                "errorResponses.[]": {
+                    "status":"code reason"
+                },
+                "parameters.[]":{
+                    "param":"dataType name required allowMultiple paramType description"
+                }
+            }
+        }
+    },
+    "model":{
+        "model" : "id",
+        "properties.{id}" :{
+            "type" : null,
+            "allowValues": {
+                "valueType": null,
+                "max" : null,
+                "min" : null,
+                "values" : null
+            },
+            "items" : {
+                "items" : "{itemType}"
+            },
+            "shortDesc" : "description"
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "discoverPath" : [
+        "../../ireserve/handler",
+        "../../ireserve/model",
+        "../../rbs/handler",
+        "../../rbs/model"
+    ],
+    "outputDir" : "../api",
+    "excludedPath" : null,
+    "apiVersion": "0.1.0",
+    "swaggerVersion": "1.0",
+    "basePath" : "https://csapp2-dev1.cs.cityu.edu.hk/webteam/ireserve_mig",
+    "resourceListPath" : "https://csapp2-dev1.cs.cityu.edu.hk/webteam/ireserve_mig/doc/api",
+    "templatePath": "template.json"
+}
