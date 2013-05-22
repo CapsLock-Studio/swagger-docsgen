@@ -108,6 +108,12 @@ class Parser {
         );
 
         $components = explode(' ', $string, 3);
+        // for Container datatype. No name needed
+        if (TypeUtils::isPrimitive($components[0]) === false) {
+            $components = explode(' ', $string, 2);
+            $components[2] = $components[1];
+            $components[1] = $components[0];
+        }
         $description = array_pop($components);
         $descs = explode('.', $description, 2);
         if (count($descs) === 2) {

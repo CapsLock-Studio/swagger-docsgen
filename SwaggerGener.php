@@ -70,6 +70,15 @@ class SwaggerGener
                                     $resource, $this->modelTable, $model);
                         }
                     }
+                    if (isset($operation['parameters'])) {
+                        foreach ($operation['parameters'] as $parameter) {
+                            $model = $parameter['dataType'];
+                            if (false === TypeUtils::isPrimitive($model)) {
+                                $modelBindedResource = $this->bindModelToResource(
+                                    $resource, $this->modelTable, $model);
+                            }
+                        }
+                    }
                 }
             }
             array_push($modelBindedResourceList, $modelBindedResource);
@@ -82,6 +91,10 @@ class SwaggerGener
 
         if (isset($resource['models'][$model]))
             return $resource;
+        if (!isset($modelTable[$model])) {
+            echo '[Warning] Resource: '.$resource['resource'].' model ' . $model . ' not found.' . "\n";
+            return $resource;
+        }
         $resource['models'][$model] = $modelTable[$model];
         $relatedModels = $this->getRelatedModel($model, $this->modelTable);
         foreach ($relatedModels as $model) {
