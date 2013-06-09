@@ -1,0 +1,14 @@
+[
+    "resource",
+    [
+        "desc",
+        "api",
+        "url",
+        "status",
+        "param",
+        "return",
+        "method"
+    ],
+    "model",
+    "property"
+]

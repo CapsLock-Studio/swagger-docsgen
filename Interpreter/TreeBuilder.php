@@ -10,7 +10,7 @@ class TreeBuilder
     private $fileName;
     private $fileContent;
     private $treeType;
-    private $tree;
+    private $trees = null;
 
     public function __construct($fileName)
     {
@@ -22,18 +22,20 @@ class TreeBuilder
     {
         $tokens = token_get_all($this->fileContent);
         $tree = array();
+        $first = true;
+        $curState = 0;
         foreach ($tokens as $t) {
             if (is_array($t) && 371 === $t[0]) {
                 $parser = new Parser($t[1]);
                 $parser->parse();
-                Dispatcher::dispatch($parser, $tree);
+                while ($params = $parser->getParams()) {
+                    Dispatcher::dispatch($params, $tree);
+                }
             }
         }
-        if (count($tree) === 0)
-            $tree = null;
-        $this->tree = $tree;
-        //echo json_encode($tree,JSON_PRETTY_PRINT);
-        return $this->tree;
+        //echo json_encode($tree, JSON_PRETTY_PRINT) . "\n";
+        //die();
+        return $tree;
     }
 
     public function getType()

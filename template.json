@@ -7,8 +7,8 @@
         "apis.{url}" : {
             "url" : "path",
             "operations.[]" : {
-                "shortDesc": "nickname",
-                "longDesc" : "notes",
+                "api" : "nickname",
+                "desc": "notes",
                 "method": "httpMethod",
                 "return": "responseClass",
                 "errorResponses.[]": {
@@ -20,7 +20,7 @@
             }
         }
     },
-    "model":{
+    "model.{model}":{
         "model" : "id",
         "properties.{id}" :{
             "type" : null,
@@ -32,8 +32,7 @@
             },
             "items" : {
                 "items" : "{itemType}"
-            },
-            "shortDesc" : "description"
+            }
         }
     }
 }

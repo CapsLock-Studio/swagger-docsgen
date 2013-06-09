@@ -21,10 +21,18 @@ class Parser {
     */
     private $longDesc;
     /**
-    * Storge for all the PHPDoc parameters
+    * Storge for all the PHPDoc parameters list
+    * each list contain a sort of paramters
     */
-    private $params;
+    private $paramsList = array();
 
+    private $curParams = null;
+
+    private $parsingLvl = array();
+
+    private $preLvl = null;
+
+    private $idx = 0;
     /**
     * Parse each line
     *
@@ -37,9 +45,9 @@ class Parser {
         foreach($lines as $line) {
             $parsedLine = $this->parseLine($line); //Parse the line
 
-            if($parsedLine === false && !isset($this->params['shortDesc'])) {
+            if($parsedLine === false && !isset($this->shortDesc)) {
                 if (isset($desc)) {
-                    $this->params['shortDesc'] = implode(PHP_EOL, $desc); //Store the first line in the short description
+                    $this->shortDesc = implode(PHP_EOL, $desc); //Store the first line in the short description
                     $desc = array();
                 }
             } elseif($parsedLine !== false) {
@@ -47,7 +55,7 @@ class Parser {
             }
         }
         if (isset($desc)) {
-            $this->params['longDesc'] = implode(PHP_EOL, $desc);
+            $this->longDesc = implode(PHP_EOL, $desc);
         }
     }
     /**
@@ -80,19 +88,25 @@ class Parser {
     *
     * @param string $type NOT USED
     */
-    private function setupParams($type = "") {
-        $params = array(
-            "resource"    =>    '',
-            "url"             =>    '',
-            "method"      =>    '',
-            "status"         =>    '',
-            "basePath"    =>    '',
-            "param"        =>    '',
-            "return"         =>    '',
-            "model"         =>   '',
-            "property"      =>   ''
-        );
-        $this->params = $params;
+    private function setupParsingGroup()
+    {
+        $config = dirname(__FILE__).'/parser_config.json';
+        $parsingLvl = json_decode(file_get_contents($config));
+
+        for ($i=0; $i < count($parsingLvl); $i++) {
+            if (is_string($parsingLvl[$i])) {
+                $this->parsingLvl[$parsingLvl[$i]] = 0;
+            } else if (is_array($parsingLvl[$i])) {
+                foreach ($parsingLvl[$i] as $parsingRule) {
+                    $this->parsingLvl[$parsingRule] = 1;
+                }
+            }
+        }
+    }
+
+    private function getLvl($group)
+    {
+        return $this->parsingLvl[$group];
     }
 
     /**
@@ -127,9 +141,9 @@ class Parser {
             $description = $descs[1];
         }
 
-        $url = $this->params['url'];
+        $url = $this->curParams['url'];
         $type = $components[0];
-        $method = $this->params['method'];
+        $method = $this->curParams['method'];
         $name = $components[1];
 
         if (strstr($url, '{'. $name .'}') === false) {
@@ -154,32 +168,39 @@ class Parser {
         return implode(' ', array_merge($components, $restrition));
     }
 
-    private function setUpProperty($value)
+    private function setupProperty($value)
     {
-        list($id, $type) = explode(':', $value);
+        @list($id, $typeAndDesc) = explode(':', $value, 2);
+        if (!isset($typeAndDesc)) {
+            die('The type of property ' . $id . ' is empty.');
+        }
+        @list($type, $description) = explode(' ', $typeAndDesc, 2);
+        if (isset($description)) {
+            $this->curParams['description'] = $description;
+        }
         $type = trim($type);
-        $this->params['id'] = $id;
+        $this->curParams['id'] = $id;
         if (TypeUtils::isArray($type)) {
             if (TypeUtils::isPrimitive(TypeUtils::getType($type))) {
                 $itemType = 'type';
             } else {
                 $itemType = '$ref';
             }
-            $this->params['itemType'] = $itemType;
-            $this->params['items'] = TypeUtils::getType($type);
+            $this->curParams['itemType'] = $itemType;
+            $this->curParams['items'] = TypeUtils::getType($type);
             $type = 'Array';
         } else if (TypeUtils::isRange($type)) {
             list($min, $max) = TypeUtils::getRange($type);
-            $this->params['min'] = intval(trim($min));
-            $this->params['max'] = intval(trim($max));
-            $this->params['valueType'] = 'RANGE';
+            $this->curParams['min'] = intval(trim($min));
+            $this->curParams['max'] = intval(trim($max));
+            $this->curParams['valueType'] = 'RANGE';
             $type = 'int';
         } else if (TypeUtils::isList($type)) {
             list($type, $values) = TypeUtils::getList($type);
-            $this->params['values'] = $values;
-            $this->params['valueType'] = "LIST";
+            $this->curParams['values'] = $values;
+            $this->curParams['valueType'] = "LIST";
         }
-        $this->params['type'] = $type;
+        $this->curParams['type'] = $type;
     }
 
     /**
@@ -190,22 +211,39 @@ class Parser {
     * @return bool True = the parameter has been set, false = the parameter was invalid
     */
     private function setParam($param, $value) {
-        if(!array_key_exists($param, $this->params)) return false;
+        if(!array_key_exists($param, $this->parsingLvl)) return false;
+        /*
+         * init parsing group
+         */
+        if (is_null($this->curParams)) {
+            $this->curParams = array();
+        }
+
+        if ($this->preLvl === 1 && $this->getLvl($param) === 0){
+            $this->paramsList[] = $this->curParams;
+            $this->curParams = array();
+        }
 
         if($param === 'param')
             $value = $this->formatParam($value);
 
         if($param === 'property')
-            $this->setUpProperty($value);
+            $this->setupProperty($value);
 
-        if(empty($this->params[$param])) {
-            $this->params[$param] = $value;
+        if(empty($this->curParams[$param])) {
+            $this->curParams[$param] = $value;
         } else {
-            if (!is_array($this->params[$param])) {
-                $this->params[$param] = array($this->params[$param]);
+            if (!is_array($this->curParams[$param])) {
+                $this->curParams[$param] =
+                    array($this->curParams[$param]);
             }
-            array_push($this->params[$param], $value);
+            array_push($this->curParams[$param], $value);
         }
+        if ($this->getLvl($param) === 0) {
+            $this->paramsList[] = $this->curParams;
+            $this->curParams = array();
+        }
+        $this->preLvl = $this->getLvl($param);
         return true;
     }
     /**
@@ -215,7 +253,7 @@ class Parser {
     */
     public function __construct($string) {
         $this->string = $string;
-        $this->setupParams();
+        $this->setupParsingGroup();
     }
     /**
     * Parse the string
@@ -232,6 +270,9 @@ class Parser {
             die('Error');
 
         $this->parseLines($lines[1]);
+
+        if (count($this->curParams) !== 0)
+            array_push($this->paramsList,$this->curParams);
     }
     /**
     * Get the short description
@@ -255,7 +296,10 @@ class Parser {
     * @return array The parameters
     */
     public function getParams() {
-        return $this->params;
+        //var_dump($this->paramsList);
+        if ($this->idx === count($this->paramsList))
+            return false;
+        return $this->paramsList[$this->idx++];
     }
 }
 ?>
