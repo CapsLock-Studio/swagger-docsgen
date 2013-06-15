@@ -1,0 +1,55 @@
+{
+    "resource": "\/inlineStyle",
+    "basePath": "http:\/\/foo.com",
+    "apiVersion": "1.0",
+    "swaggerVersion": "1.0",
+    "apis": [
+        {
+            "path": "\/foo\/foofoo",
+            "operations": [
+                {
+                    "nickname": "foofoo",
+                    "notes": "this is a foo API",
+                    "httpMethod": "POST",
+                    "responseClass": "BarBar(bar:Bar)",
+                    "parameters": [
+                        {
+                            "dataType": "Bar",
+                            "name": "Bar",
+                            "required": true,
+                            "allowMultiple": false,
+                            "paramType": "body",
+                            "description": " this is a bar"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "models": {
+        "BarBar(bar:Bar)": {
+            "id": "BarBar(bar:Bar)",
+            "properties": {
+                "bar": {
+                    "type": "Bar"
+                }
+            }
+        },
+        "Bar": {
+            "id": "Bar",
+            "properties": {
+                "barbar": {
+                    "type": "BarBar"
+                }
+            }
+        },
+        "BarBar": {
+            "id": "BarBar",
+            "properties": {
+                "bar": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

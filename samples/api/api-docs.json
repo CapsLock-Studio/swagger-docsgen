@@ -1,0 +1,13 @@
+{
+    "apis": [
+        {
+            "path": "\/sampleAPI"
+        },
+        {
+            "path": "\/inlineStyle"
+        }
+    ],
+    "apiVersion": "1.0",
+    "swaggerVersion": "1.0",
+    "basePath": "http:\/\/bar.com"
+}

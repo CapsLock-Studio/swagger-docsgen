@@ -1,0 +1,112 @@
+{
+    "resource": "\/sampleAPI",
+    "basePath": "http:\/\/foo.com",
+    "apiVersion": "1.0",
+    "swaggerVersion": "1.0",
+    "apis": [
+        {
+            "path": "\/sampleAPI\/api1",
+            "operations": [
+                {
+                    "nickname": "api1",
+                    "notes": "this is a foo API",
+                    "httpMethod": "POST",
+                    "responseClass": "SampleModel(sample:SampleModel)",
+                    "parameters": [
+                        {
+                            "dataType": "SampleModel",
+                            "name": "SampleModel",
+                            "required": true,
+                            "allowMultiple": false,
+                            "paramType": "body",
+                            "description": " this is a bar"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "\/sampleAPI\/api2",
+            "operations": [
+                {
+                    "nickname": "api2",
+                    "notes": "this is a foo API",
+                    "httpMethod": "GET",
+                    "responseClass": "LIST[SampleModel]",
+                    "parameters": [
+                        {
+                            "dataType": "int",
+                            "name": "foo",
+                            "required": true,
+                            "allowMultiple": true,
+                            "paramType": "query",
+                            "description": " this is a foo"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "models": {
+        "SampleModel(sample:SampleModel)": {
+            "id": "SampleModel(sample:SampleModel)",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "range": {
+                    "type": "int",
+                    "allowValues": {
+                        "valueType": "RANGE",
+                        "max": 100,
+                        "min": 1
+                    }
+                },
+                "enum": {
+                    "type": "string",
+                    "allowValues": {
+                        "valueType": "LIST",
+                        "values": [
+                            "num1",
+                            "enum2",
+                            "enum3"
+                        ]
+                    }
+                },
+                "sample": {
+                    "type": "SampleModel"
+                }
+            }
+        },
+        "SampleModel": {
+            "id": "SampleModel",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "range": {
+                    "type": "int",
+                    "allowValues": {
+                        "valueType": "RANGE",
+                        "max": 100,
+                        "min": 1
+                    }
+                },
+                "enum": {
+                    "type": "string",
+                    "allowValues": {
+                        "valueType": "LIST",
+                        "values": [
+                            "num1",
+                            "enum2",
+                            "enum3"
+                        ]
+                    }
+                },
+                "sample": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

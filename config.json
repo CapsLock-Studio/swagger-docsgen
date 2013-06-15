@@ -1,15 +1,13 @@
 {
     "discoverPath" : [
-        "../../ireserve/handler",
-        "../../ireserve/model",
-        "../../rbs/handler",
-        "../../rbs/model"
+        "samples/sample",
+        "samples/inline_sample"
     ],
-    "outputDir" : "../api",
+    "outputDir" : "samples/api",
     "excludedPath" : null,
-    "apiVersion": "0.1.0",
+    "apiVersion": "1.0",
     "swaggerVersion": "1.0",
-    "basePath" : "https://csapp2-dev1.cs.cityu.edu.hk/webteam/ireserve_mig",
-    "resourceListPath" : "https://csapp2-dev1.cs.cityu.edu.hk/webteam/ireserve_mig/doc/api",
+    "basePath" : "http://foo.com",
+    "resourceListPath" : "http://bar.com",
     "templatePath": "template.json"
 }

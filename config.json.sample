@@ -1,0 +1,12 @@
+{
+    "discoverPath" : [
+        "project/dir/path/to/scan"
+    ],
+    "outputDir" : "dir/path/to/output",
+    "excludedPath" : null,
+    "apiVersion": "[api version]",
+    "swaggerVersion": "1.0",
+    "basePath" : "[your api root url]",
+    "resourceListPath" : "[your swagger doc url]",
+    "templatePath": "template.json"
+}
